@@ -11,7 +11,21 @@
 <body>
     <div id = "container">
         <div id = "map"></div>
-        <div id = "sidebar"></div>
+        <div class = "sidebar" id = "sidebar">
+            <h3>Load Vector Data</h3>
+            <div class = "file-upload-section">
+                <label for = "vector-file">Choose vector file:</label>
+                <input type = "file" id = "vector-file" accept = ".geojson" />
+                <button id = "load-file-btn" disabled>Load File</button>
+            </div>
+
+            <h3>Saved Datasets</h3>
+            <div class = "datasets-section">
+                <button id = "refresh-datasets-btn"> Refresh List </button>
+                <div id =  "datasets-list">
+                    <p class = "loading">Loading datasets...</p>
+            </div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>

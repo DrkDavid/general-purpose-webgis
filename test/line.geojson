@@ -1,0 +1,16 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [13.404954, 52.520008],
+      [13.405875, 52.521131],
+      [13.407123, 52.522389]
+    ]
+  },
+  "properties": {
+    "name": "Sample Street",
+    "color": "blue",
+    "width": 5
+  }
+}

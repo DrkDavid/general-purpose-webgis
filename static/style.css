@@ -32,3 +32,130 @@ body, html {
   flex-direction: column;
   font-size: 0.85em;
 }
+
+#sidebar h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #fff;
+  border-bottom: 1px solid #444;
+  padding-bottom: 8px;
+}
+
+.file-upload-section {
+  margin-bottom: 20px;
+}
+
+.sidebar label {
+  display: block;
+  margin-bottom: 8px;
+  color: #ccc
+}
+
+.sidebar input[type="file"] {
+  padding: 8px;
+  margin-bottom: 10px;
+  background-color: #ccc;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #2a2a2a;
+}
+
+.sidebar button {
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  background-color: #ccc;
+  border: none;
+  border-radius: 4px;
+  color: #2a2a2a;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.sidebar button:hover:not(:disabled) {
+  background-color: #666;
+}
+
+.sidebar:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+#datasets-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.dataset-item {
+  background-color: #333;
+  border: 1px solid #555;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dataset-item:hover {
+  background-color: #404040;
+}
+
+.dataset-item.active {
+  background-color: #0078d4;
+  border-color: #106ebe;
+}
+
+.dataset-name {
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.dataset-meta {
+  font-size: 0.8em;
+  color: #ccc;
+  line-height: 1.3;
+}
+
+.loading {
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  color: white;
+  font-weight: 500;
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+  max-width: 300px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.notification.success {
+  background-color: #28a745;
+}
+
+.notification.error {
+  background-color: #dc3545;
+}
+
+.notification.info {
+  background-color: #17a2b8;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
