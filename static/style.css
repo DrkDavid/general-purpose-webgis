@@ -1,10 +1,31 @@
+:root {
+  --color-bg: #1e1e1e;
+  --color-bg-alt: #2a2a2a;
+  --color-bg-hover: #404040;
+  --color-bg-card: #333;
+
+  --color-border: #444;
+  --color-border-light: #555;
+
+  --color-text: #eee;
+  --color-text-muted: #ccc;
+  --color-text-faded: #999;
+
+  --color-accent: #0078d4;
+  --color-accent-dark: #106ebe;
+
+  --color-success: #28a745;
+  --color-error: #dc3545;
+  --color-info: #17a2b8;
+}
+
 body, html {
   margin: 0;
   padding: 0;
   height: 100%;
   font-family: 'Segoe UI', Roboto, sans-serif;
-  background-color: #1e1e1e;
-  color: #eee;
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 
 #container {
@@ -24,8 +45,8 @@ body, html {
 #sidebar {
   width: 280px;
   padding: 12px;
-  background-color: #2a2a2a;
-  border: 1px solid #444;
+  background-color: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   box-shadow: 0 0 6px rgba(0,0,0,0.5);
   display: flex;
@@ -36,8 +57,8 @@ body, html {
 #sidebar h3 {
   margin-top: 0;
   margin-bottom: 15px;
-  color: #fff;
-  border-bottom: 1px solid #444;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
   padding-bottom: 8px;
 }
 
@@ -48,76 +69,96 @@ body, html {
 .sidebar label {
   display: block;
   margin-bottom: 8px;
-  color: #ccc
+  color: var(--color-text-muted);
 }
 
-.sidebar input[type="file"] {
-  padding: 8px;
-  margin-bottom: 10px;
-  background-color: #ccc;
-  border: 1px solid #444;
+input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  border: 1px solid var(--color-border);
   border-radius: 4px;
-  color: #2a2a2a;
+  color: var(--color-bg-alt);
+  display: inline-block;
+  padding: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
 }
 
 .sidebar button {
-  padding: 8px 12px;
+  padding: 6px 9px;
   margin-bottom: 10px;
-  background-color: #ccc;
+  background-color: var(--color-text-muted);
   border: none;
   border-radius: 4px;
-  color: #2a2a2a;
+  color: var(--color-bg-alt);
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .sidebar button:hover:not(:disabled) {
-  background-color: #666;
+  background-color: var(--color-text-faded);
 }
 
 .sidebar:disabled {
-  background-color: #666;
+  background-color: var(--color-text-faded);
   cursor: not-allowed;
 }
 
+.datasets-section {
+  display: inline-flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  align-items: flex-start;
+}
+
 #datasets-list {
-  max-height: 400px;
+  width: 100%;
   overflow-y: auto;
 }
 
+.dataset-container {
+  display: flex;
+  justify-content: space-between;
+}
+
 .dataset-item {
-  background-color: #333;
-  border: 1px solid #555;
+  width : 100%;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border-light);
   border-radius: 6px;
   padding: 10px;
   margin-bottom: 8px;
+  margin-right: 8px;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .dataset-item:hover {
-  background-color: #404040;
+  background-color: var(--color-bg-hover);
 }
 
 .dataset-item.active {
-  background-color: #0078d4;
-  border-color: #106ebe;
+  background-color: var(--color-accent);
+  border-color: var(--color-accent-dark);
 }
 
 .dataset-name {
   font-weight: bold;
-  color: #fff;
+  color: var(--color-text);
   margin-bottom: 4px;
 }
 
 .dataset-meta {
   font-size: 0.8em;
-  color: #ccc;
+  color: var(--color-text-muted);
   line-height: 1.3;
 }
 
 .loading {
-  color: #999;
+  color: var(--color-text-faded);
   font-style: italic;
   text-align: center;
   margin: 20px 0;
@@ -138,15 +179,15 @@ body, html {
 }
 
 .notification.success {
-  background-color: #28a745;
+  background-color: var(--color-success);
 }
 
 .notification.error {
-  background-color: #dc3545;
+  background-color: var(--color-error);
 }
 
 .notification.info {
-  background-color: #17a2b8;
+  background-color: var(--color-info);
 }
 
 @keyframes slideIn {
@@ -158,4 +199,19 @@ body, html {
     transform: translateX(0);
     opacity: 1;
   }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-alt);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  background-clip: content-box;
+  border: 6px solid transparent;
 }

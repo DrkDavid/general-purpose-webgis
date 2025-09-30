@@ -145,6 +145,21 @@ def get_dataset(dataset_id):
     except Exception as e:
         return jsonify({'error' : str(e)}), 500
 
+@app.route('/api/remove-dataset/<int:dataset_id>', methods = ['GET', 'DELETE'])
+def remove_dataset(dataset_id):
+    try:
+        conn = get_db_connection()
+        conn.execute("DELETE FROM datasets WHERE id = ?", (dataset_id,))
+        conn.commit()
+        return jsonify({
+            'success' : True,
+            'id' : dataset_id,
+            'message' : f'Dataset {dataset_id} removed successfully'
+        }), 200
+        
+    except Exception as e:
+        return({'error' : str(e)}), 500
+
 if __name__ == '__main__':
     init_db()
     app.run(host="0.0.0.0", debug=True)
