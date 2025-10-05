@@ -1,4 +1,4 @@
-import { showNotification } from "./notifications.js";
+import { showNotification } from "../utils/notifications.js";
 
 export async function saveGeoJSONToDatabase(geoData, filename) {
 

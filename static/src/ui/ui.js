@@ -1,11 +1,12 @@
 import { displayVectorData,
-  removeLayer
- } from "./map.js";
+  removeLayerById,
+  removeLayers
+ } from "../map/map_utils.js";
 
 import { saveGeoJSONToDatabase, 
   loadDatasetsList, 
   removeDatasetById, 
-  loadDatasetById } from "./data_manager.js";
+  loadDatasetById } from "../data/data_manager.js";
 
 const fileInput = document.getElementById('vector-file');
 const loadButton = document.getElementById('vector-file');
@@ -29,6 +30,7 @@ loadButton.addEventListener('change', function() {
 refreshDatasetsBtn.addEventListener('click', async function() {
   const datasets = await loadDatasetsList(datasetsList);
   displayDatasetsList(datasets);
+  removeLayers(layerDictionary);
 });
 
 window.addEventListener('load', async function() {
@@ -54,9 +56,9 @@ function uploadVectorFile(file) {
 
         displayDatasetsList(datasets);
 
-        removeLayer(layerDictionary, id)
+        removeLayerById(layerDictionary, id)
 
-        const geoLayer = displayVectorData(geoData, id);  
+        const geoLayer = displayVectorData(geoData);  
 
         updateDatasetsList(id, geoLayer);
       }
@@ -75,6 +77,11 @@ function uploadVectorFile(file) {
 
   reader.readAsText(file);
 };
+
+export async function refreshDatasetsList() {
+  const datasets = await loadDatasetsList(datasetsList);
+  displayDatasetsList(datasets);
+}
 
 function updateDatasetsList(id, geoLayer) {
   try {
@@ -130,14 +137,14 @@ function displayDatasetsList(datasets) {
 
       datasetDiv.addEventListener('click', async function() {
         const geoData = await loadDatasetById(dataset.id, dataset.name);
-        removeLayer(layerDictionary, dataset.id)
-        const geoLayer = displayVectorData(geoData, dataset.id);  
+        removeLayerById(layerDictionary, dataset.id)
+        const geoLayer = displayVectorData(geoData);  
         updateDatasetsList(dataset.id, geoLayer);
       });
 
       deleteDiv.addEventListener('click', async function() {
         const removedId = await removeDatasetById(dataset.id, datasetContainerDiv);
-        removeLayer(layerDictionary, removedId)
+        removeLayerById(layerDictionary, removedId)
         layerDictionary.delete(removedId)
         datasetContainerDiv.remove()
       });

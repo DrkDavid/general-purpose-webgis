@@ -6,29 +6,34 @@
     <title>Hello World!</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
 </head>
 
 <body>
     <div id = "container">
-        <div id = "map"></div>
+        <div id = "map">
+            <div class="btn-group" >
+                <button id = "point-feature-btn" class = "map-btn"><i class="fa-solid fa-location-dot"></i></button>
+                <button id = "line-feature-btn" class = "map-btn"><i class="fa-solid fa-circle-nodes"></i></button>
+                <button id = "polygon-feature-btn" class = "map-btn"><i class="fa-solid fa-hexagon"></i></button>
+            </div>
+        </div>
         <div class = "sidebar" id = "sidebar">
             <h3>Load Vector Data</h3>
 
             <label for="vector-file" class="custom-file-upload">
-                <i class="fa fa-upload"></i> Upload
+                <i class="fa-solid fa-upload"></i> Upload
             </label>
             <input id="vector-file" type="file" accept = ".geojson"/>
 
             <h3>Saved Datasets</h3>
             <div class = "datasets-section">
-                <button id = "refresh-datasets-btn"><i class="fa fa-refresh"></i></button>
+                <button id = "refresh-datasets-btn"><i class="fa-solid fa-refresh"></i></button>
                 <div id =  "datasets-list">
                 <p class = "loading">Loading datasets...</p>
             </div>
         </div>
     </div>
-
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script type="module" src="{{ url_for('static', filename='main.js') }}"></script>
 </body>

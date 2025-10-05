@@ -1,0 +1,19 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Example Multi Point",
+        "description": "This is a sample multi point."
+      },
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+            [-155.52, 19.61],
+            [-156.22, 20.74],
+            [-157.97, 21.46]
+        ]
+        }
+    }]
+}  
