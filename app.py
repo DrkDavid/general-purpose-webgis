@@ -1,4 +1,6 @@
 from flask import Flask, request, jsonify, render_template
+from os import listdir
+from os.path import isfile, join
 import sqlite3
 import json
 
@@ -7,6 +9,7 @@ app = Flask(__name__)
 DATABASE = 'webgis.db'
 
 def init_db():
+    #TODO: save geojson in server not in db (save path in db?)
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -125,7 +128,53 @@ def get_datasets():
     
     except Exception as e:
         return jsonify({'error' : str(e)}), 500
-
+    
+@app.route('/api/update-dataset', methods=['POST'])
+def update_dataset():
+    try:
+        data = request.get_json()
+        
+        if not data or 'id' not in data or 'data' not in data:
+            return jsonify({'error' : 'Missing id or data'}), 400
+        
+        dataset_id = data['id']
+        dataset = data['data']
+        
+        geometry_types = set()
+        feature_count = 0
+        
+        if dataset.get('type') == 'FeatureCollection':
+            features = dataset.get('features', [])
+            feature_count = len(features)
+            for feature in features:
+                if feature.get('geometry') and feature['geometry'].get('type'):
+                    geometry_types.add(feature['geometry']['type'])
+        
+        geometry_types_str = ','.join(sorted(geometry_types))
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            UPDATE datasets
+            SET data = ?, geometry_types = ?, feature_count = ?
+            WHERE id = ?
+            ''',
+            (json.dumps(dataset), geometry_types_str, feature_count, dataset_id)
+        )
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'success' : True,
+            'id' : dataset_id,
+            'message' : f'Dataset {dataset_id} updated successfully'
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error' : str(e)}), 500
+    
 @app.route('/api/get-dataset/<int:dataset_id>', methods=['GET'])
 def get_dataset(dataset_id):
     try:
@@ -157,6 +206,17 @@ def remove_dataset(dataset_id):
             'message' : f'Dataset {dataset_id} removed successfully'
         }), 200
         
+    except Exception as e:
+        return({'error' : str(e)}), 500
+
+@app.route('/api/icons', methods=['GET'])
+def get_icons():
+    
+    icons_path = "./static/custom-icons/"
+    
+    try:
+        icons = [f for f in listdir(icons_path) if isfile(join(icons_path, f))]
+        return jsonify(icons), 200
     except Exception as e:
         return({'error' : str(e)}), 500
 

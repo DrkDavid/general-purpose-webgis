@@ -34,13 +34,219 @@ body, html {
   gap: 8px;
   padding: 10px;
   box-sizing: border-box;
+  position: relative;
 }
 
 #map {
   position: relative;
-  flex: 2;
+  flex: 1;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+.panel {
+  width: 280px;
+  background-color: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85em;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.panel.collapsed {
+  width: 40px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--color-border);
+  min-height: 50px;
+}
+
+.panel-header h3 {
+  margin: 0;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.panel-toggle {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 1em;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+
+.panel-toggle:hover {
+  color: var(--color-accent);
+}
+
+.panel-content {
+  padding: 12px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.panel.collapsed .panel-content {
+  display: none;
+}
+
+.panel.collapsed .panel-header h3 {
+  display: none;
+}
+
+.panel.collapsed .panel-header {
+  flex-direction: column;
+  padding: 8px 4px;
+  height: auto;
+}
+
+.leaflet-popup-content-wrapper {
+  background-color: var(--color-bg-card);
+}
+
+.leaflet-popup-content {
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--color-bg-card);
+  color: var(--color-text);
+  border-radius: 8px;
+  font-size: 0.85em;
+}
+
+.leaflet-popup-content form {
+  flex-direction: column;
+  gap: 6px;
+}
+
+.leaflet-popup-content label {
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-size: small;
+}
+
+.leaflet-popup-content input {
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-alt);
+  color: var(--color-text);
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+.leaflet-popup-content input:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+.leaflet-popup-content button {
+  margin-top: 6px;
+  padding: 6px;
+  background-color: var(--color-accent);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.leaflet-popup-content button:hover {
+  background-color: var(--color-accent-dark);
+}
+
+.leaflet-popup-tip {
+  background: none;
+}
+
+.icon-picker-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(3px);
+}
+
+.icon-picker-content {
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 15px;
+  max-width: 600px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.icon-option {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  padding: 12px 6px;
+  transition: all 0.2s ease;
+  color: var(--color-text-muted);
+}
+
+.icon-option img {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+}
+
+.icon-option p {
+  margin: 0;
+  font-size: 0.75em;
+  color: var(--color-text-faded);
+}
+
+.icon-option:hover {
+  background: var(--color-bg-hover);
+  border-color: var(--color-accent);
+  color: var(--color-text);
+  transform: translateY(-2px);
+}
+
+.icon-option.selected {
+  border-color: var(--color-accent);
+  background: var(--color-accent-dark);
+  color: var(--color-text);
+}
+
+.icon-picker-close {
+  grid-column: 1 / -1;
+  justify-self: end;
+  padding: 8px 8px;
+  border: none;
+  background-color: var(--color-text-muted);
+  color: var(--color-bg-alt);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.icon-picker-close:hover {
+  background: var(--color-accent-dark);
 }
 
 .btn-group {
@@ -64,6 +270,10 @@ body, html {
   transition: background-color 0.2s;
 }
 
+.map-btn:disabled {
+  background-color: var(--color-border);
+}
+
 .map-btn.active {
   background-color: var(--color-accent);
   color: var(--color-text);
@@ -72,26 +282,6 @@ body, html {
 
 .map-btn:hover:not(:disabled) {
   background-color: var(--color-text-faded);
-}
-
-#sidebar {
-  width: 280px;
-  padding: 12px;
-  background-color: var(--color-bg-alt);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  box-shadow: 0 0 6px rgba(0,0,0,0.5);
-  display: flex;
-  flex-direction: column;
-  font-size: 0.85em;
-}
-
-#sidebar h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  color: var(--color-text);
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 8px;
 }
 
 .file-upload-section {
@@ -111,14 +301,14 @@ input[type="file"] {
 .custom-file-upload {
   border: 1px solid var(--color-border);
   border-radius: 4px;
-  color: var(--color-bg-alt);
+  color: var(--color-text);
   display: inline-block;
   padding: 8px;
   cursor: pointer;
   margin-bottom: 10px;
 }
 
-.sidebar button {
+.panel button {
   padding: 8px 8px;
   margin-bottom: 10px;
   background-color: var(--color-text-muted);
@@ -129,11 +319,11 @@ input[type="file"] {
   transition: background-color 0.2s;
 }
 
-.sidebar button:hover:not(:disabled) {
+.panel button:hover:not(:disabled) {
   background-color: var(--color-text-faded);
 }
 
-.sidebar:disabled {
+.panel:disabled {
   background-color: var(--color-text-faded);
   cursor: not-allowed;
 }
@@ -151,9 +341,16 @@ input[type="file"] {
   overflow-y: auto;
 }
 
-.dataset-container {
+.dataset-container-h {
   display: flex;
   justify-content: space-between;
+  flex-direction: row;
+}
+
+.dataset-container-v {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
 }
 
 .dataset-item {
@@ -233,7 +430,6 @@ input[type="file"] {
   }
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar {
   width: 20px;
 }

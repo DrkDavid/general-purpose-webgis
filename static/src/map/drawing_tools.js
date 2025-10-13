@@ -1,32 +1,37 @@
-import { saveGeoJSONToDatabase } from "../data/data_manager.js";
-import { refreshDatasetsList } from "../ui/ui.js";
+import { saveGeoJSONToDatabase, updateGeoJSONToDatabase } from "../data/data_manager.js";
+import { refreshDatasetsList, showIconPicker } from "../ui/ui.js";
 import { map, icons } from "./map_setup.js";
-import { clearLayers, createGeoJSON } from "./map_utils.js";
+import { clearLayers, createGeoJSON, prepareFeatureChanges } from "./map_utils.js";
 
+let currentDatasetId = null;
 let drawing = false;
 let mode = 0;
 let selectedPoints = [];
+let pointFeatures = [];
 let lyrsList = [];
 let tempLine = null;
 
-const pointBtn = document.getElementById("point-feature-btn");
-const lineBtn = document.getElementById("line-feature-btn");
-const polyBtn = document.getElementById("polygon-feature-btn");
+const drawingButtons = document.querySelectorAll('[data-draw-mode]');
 
-pointBtn.addEventListener('click', () => toggleDrawing(0, pointBtn));
-lineBtn.addEventListener('click', () => toggleDrawing(1, lineBtn));
-polyBtn.addEventListener('click', () => toggleDrawing(2, polyBtn));
-
-L.DomEvent.disableClickPropagation(pointBtn);
-L.DomEvent.disableClickPropagation(lineBtn);
-L.DomEvent.disableClickPropagation(polyBtn);
+drawingButtons.forEach(btn => {
+  const mode = parseInt(btn.dataset.drawMode);
+  btn.addEventListener('click', () => toggleDrawing(mode, btn));
+  L.DomEvent.disableClickPropagation(btn);
+});
 
 map.on('click', e => {
   if (!drawing) return;
   const latlng = e.latlng;
-  selectedPoints.push([latlng.lng, latlng.lat]);
-  const marker = L.marker(latlng, { icon: icons.drawingPin }).addTo(map);
+  const marker = L.marker(latlng, { icon: icons.pin }).addTo(map);
+  var featureEntry = { marker, latlng, props: {} };
+
+  pointFeatures.push(featureEntry);
   lyrsList.push(marker);
+  selectedPoints.push([latlng.lng, latlng.lat,]);
+
+  bindEditablePopup(featureEntry);
+  marker.openPopup();
+
   if (selectedPoints.length > 1 && mode !== 0) {
     if (lyrsList.permanentLine) map.removeLayer(lyrsList.permanentLine);
     const lineLatLngs = selectedPoints.map(([lng, lat]) => [lat, lng]);
@@ -45,20 +50,27 @@ map.on('mousemove', e => {
 });
 
 async function toggleDrawing(m, btn) {
+
   drawing = !drawing;
   mode = m;
+
   if (drawing) {
     map.getContainer().style.cursor = 'crosshair';
     btn.classList.add('active');
+    drawingButtons.forEach(b => {
+      if (b != btn) b.disabled = true;
+    });
   } else {
     map.getContainer().style.cursor = '';
     btn.classList.remove('active');
+    drawingButtons.forEach(b => (b.disabled = false));
     if (selectedPoints.length > 0) {
-      const geo = buildFeature(mode);
-      await saveGeoJSONToDatabase(geo, "test.geojson");
+      const geoData = buildFeature(mode);
+      await saveGeoJSONToDatabase(geoData, "test.geojson");
       refreshDatasetsList();
     }
     selectedPoints = [];
+    pointFeatures = [];
     clearLayers(map, lyrsList);
     if (tempLine) {
       map.removeLayer(tempLine);
@@ -68,7 +80,69 @@ async function toggleDrawing(m, btn) {
 }
 
 function buildFeature(mode) {
-  if (mode === 0) return createGeoJSON("MultiPoint", selectedPoints);
+  if (mode === 0) {
+    const coordinates = pointFeatures.map(f => [f.latlng.lng, f.latlng.lat]);
+    const properties = pointFeatures.map(f => f.props);
+    return createGeoJSON("MultiPoint", coordinates, properties);
+  }
   if (mode === 1) return createGeoJSON("LineString", selectedPoints);
   if (mode === 2) return createGeoJSON("Polygon", [[...selectedPoints, selectedPoints[0]]]);
+}
+
+export function setCurrentDatasetId(datasetId) {
+  currentDatasetId = datasetId;
+}
+
+export function bindEditablePopup(featureEntry) {
+  const marker = featureEntry.marker;
+
+  //TODO: Make so the user can define  the properties of the geojson
+  const createPopupContent = () => `
+    <form class="marker-form">
+      <label>Name</label><br>
+      <input type="text" name="name" value="${featureEntry.props.name || ''}" placeholder="Enter name"><br>
+      <label>Description</label><br>
+      <input type="text" name="description" value="${featureEntry.props.description || ''}" placeholder="Enter description"><br>
+      <label>Icon</label><br>
+      <button type="button" class="icon-picker-btn"><i class="fa-solid fa-image"></i> Choose Icon</button>
+      <span class="selected-icon">${featureEntry.props.icon || 'point'}</span><br>
+      <button type="submit"><i class="fa-solid fa-check"></i> Save</button>
+    </form>
+  `;
+
+  marker.bindPopup(createPopupContent());
+
+  marker.on('popupopen', () => {
+
+    marker.setPopupContent(createPopupContent());
+
+    const popupElement = marker.getPopup().getElement();
+    const form = popupElement.querySelector('.marker-form');
+    const iconBtn = form.querySelector('.icon-picker-btn');
+
+    iconBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showIconPicker(featureEntry, form, icons);
+    });
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      featureEntry.props.name = form.elements['name'].value;
+      featureEntry.props.description = form.elements['description'].value;
+      updateMarkerIcon(marker, featureEntry.props.icon);
+      
+      if (currentDatasetId !== null) {
+        const geoData = prepareFeatureChanges(currentDatasetId);
+        await updateGeoJSONToDatabase(geoData, currentDatasetId);
+      }
+
+      marker.closePopup();
+    });
+  });
+}
+
+function updateMarkerIcon(marker, iconName) {
+  const newIcon = icons[iconName] || icons.point;
+  marker.setIcon(newIcon);
 }

@@ -1,5 +1,18 @@
 import { showNotification } from "../utils/notifications.js";
 
+export function prepareGeoJSONForDownload(geoData) {
+  try {
+    const geoJSONString = JSON.stringify(geoData, null, 2);
+    const blob = new Blob([geoJSONString], { type: 'application/geo+json' });
+    const url = URL.createObjectURL(blob);
+    return url;
+  }
+  catch (error) {
+    showNotification(`Error preparing file download`, 'error')
+    return 0;
+  }
+}
+
 export async function saveGeoJSONToDatabase(geoData, filename) {
 
   try {
@@ -32,6 +45,33 @@ export async function saveGeoJSONToDatabase(geoData, filename) {
   }
 }
 
+export async function updateGeoJSONToDatabase(geoData, datasetId) {
+  try {
+    const response = await fetch('/api/update-dataset', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id: datasetId,
+      data: geoData
+    })
+  });
+
+  const result = await response.json();
+  if (response.ok) {
+    showNotification(`${result.message}`, 'success');
+    return result.id;
+  }
+  else {
+      showNotification(`Error updating: ${result.error}`, 'error');
+      return 0;
+    }
+  }
+  catch (error) {
+    showNotification(`Network error while updating data`, 'error')
+    return 0;
+  }
+}
+
 export async function loadDatasetsList(datasetsList) {
   datasetsList.innerHTML = '<p class="loading">Loading datasets...</p>';
 
@@ -52,14 +92,14 @@ export async function loadDatasetsList(datasetsList) {
   }
 }
 
-export async function loadDatasetById(datasetId, datasetName) {
+export async function loadDatasetById(datasetId) {
 
   try {
     const response = await fetch(`/api/get-dataset/${datasetId}`);
     const geoData = await response.json();
 
     if (response.ok) { 
-      showNotification(`Loaded "${datasetName}"`, 'info')
+      showNotification(`Loaded dataset id ${datasetId}`, 'info')
       return geoData;
     }
     else {
@@ -93,5 +133,17 @@ export async function removeDatasetById(datasetId) {
   catch (error) {
     showNotification('Network error removing dataset', 'error');
     return 0
+  }
+}
+
+export async function loadCustomIcons() {
+  try {
+    const response = await fetch(`/api/icons`);
+    const files = await response.json();
+    return files;
+
+  } catch (err) {
+    showNotification('Network error loading custom icons', 'error');
+    return 0;
   }
 }

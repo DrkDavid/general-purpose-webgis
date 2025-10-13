@@ -11,30 +11,48 @@
 
 <body>
     <div id = "container">
-        <div id = "map">
-            <div class="btn-group" >
-                <button id = "point-feature-btn" class = "map-btn"><i class="fa-solid fa-location-dot"></i></button>
-                <button id = "line-feature-btn" class = "map-btn"><i class="fa-solid fa-circle-nodes"></i></button>
-                <button id = "polygon-feature-btn" class = "map-btn"><i class="fa-solid fa-hexagon"></i></button>
+        <div class="panel left-panel" id="left-panel">
+            <div class="panel-header">
+                <h3>Left panel</h3>
+                <button class="panel-toggle" id="left-panel-toggle"><i class="fa-solid fa-chevron-left"></i></button>
+            </div>
+            <div class="panel-content">
+                <p>test panel content here</p>
             </div>
         </div>
-        <div class = "sidebar" id = "sidebar">
-            <h3>Load Vector Data</h3>
 
-            <label for="vector-file" class="custom-file-upload">
-                <i class="fa-solid fa-upload"></i> Upload
-            </label>
-            <input id="vector-file" type="file" accept = ".geojson"/>
+        <div id="map">
+            <div class="btn-group">
+                <button id="point-feature-btn" class="map-btn" data-draw-mode="0"><i class="fa-solid fa-location-dot"></i></button>
+                <button id="line-feature-btn" class="map-btn" data-draw-mode="1"><i class="fa-solid fa-circle-nodes"></i></button>
+                <button id="polygon-feature-btn" class="map-btn" data-draw-mode="2"><i class="fa-solid fa-hexagon"></i></button>
+            </div>
+        </div>
 
-            <h3>Saved Datasets</h3>
-            <div class = "datasets-section">
-                <button id = "refresh-datasets-btn"><i class="fa-solid fa-refresh"></i></button>
-                <div id =  "datasets-list">
-                <p class = "loading">Loading datasets...</p>
+        <div class="panel right-panel" id="right-panel">
+            <div class="panel-header">
+                <h3>Load Vector Data</h3>
+                <button class="panel-toggle" id="right-panel-toggle"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+            <div class="panel-content">
+                <label for="vector-file" class="custom-file-upload">
+                    <i class="fa-solid fa-upload"></i> Upload
+                </label>
+                <input id="vector-file" type="file" accept=".geojson"/>
+
+                <h3>Saved Datasets</h3>
+                <div class="datasets-section">
+                    <button id="refresh-datasets-btn"><i class="fa-solid fa-refresh"></i></button>
+                    <div id="datasets-list">
+                        <p class="loading">Loading datasets...</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script type="module" src="{{ url_for('static', filename='main.js') }}"></script>
+    
 </body>
 </html>
